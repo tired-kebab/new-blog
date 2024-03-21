@@ -1,20 +1,20 @@
 /* eslint-disable react/prop-types */
 import { Tooltip } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { BlogContext } from "../../contexts/Context";
 
-const LikeButton = ({ handleLike, likedPosts, index }) => {
-  useEffect(() => {
-    localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-  }, [likedPosts]);
+const LikeButton = ({ handleLike, postId }) => {
+  const { posts } = useContext(BlogContext);
+  const isLikedPost = posts.find((post) => post.id === postId).isLiked;
   return (
     <Tooltip
-      title={likedPosts.includes(index) ? "Unlike" : "Like"}
-      onClick={() => handleLike(index)}
+      title={isLikedPost ? "Unlike" : "Like"}
+      onClick={() => handleLike(postId)}
     >
       <FavoriteIcon
         sx={{
-          color: likedPosts.includes(index) ? "red" : "grey",
+          color: isLikedPost ? "red" : "grey",
           cursor: "pointer",
         }}
       />

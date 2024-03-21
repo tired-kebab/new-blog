@@ -7,6 +7,11 @@ function App() {
   const initialPosts = JSON.parse(localStorage.getItem("posts")) || [];
   const [posts, setPosts] = useState(initialPosts); // I'm storing my post in this array
   const [isModal, setIsModal] = useState(false);
+  const [editedPostId, setEditedPostId] = useState();
+  console.log("posts", posts);
+  // const initialLikedPosts = JSON.parse(
+  //   JSON.stringify(localStorage.getItem("likedPosts"))
+  // );
 
   return (
     <>
@@ -18,6 +23,8 @@ function App() {
           setPosts,
           isModal,
           setIsModal,
+          editedPostId,
+          setEditedPostId,
         }}
       >
         <Navbar />

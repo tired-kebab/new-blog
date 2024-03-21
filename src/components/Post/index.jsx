@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { BlogContext } from "../../contexts/Context";
 import Typography from "@mui/material/Typography";
 import { Box, Card, Button } from "@mui/material";
@@ -7,34 +7,27 @@ import Modal from "../Modal/Modal";
 import LikeButton from "./LikeButton";
 
 const index = () => {
-  const { posts, setPosts, isModal, setIsModal } = useContext(BlogContext);
-  const initialLikedPosts =
-    JSON.parse(localStorage.getItem("likedPosts")) || [];
-  const [likedPosts, setLikedPosts] = useState(initialLikedPosts);
+  const { posts, setPosts, isModal, setIsModal, setEditedPostId } =
+    useContext(BlogContext);
   // const [isEditing, setIsEditing] = useState(false);
 
-  const handleLike = (index) => {
-    setLikedPosts((prevLikedPosts) => {
-      if (prevLikedPosts.includes(index)) {
-        return;
-      } else {
-        console.log(prevLikedPosts);
-        return [...prevLikedPosts, index];
-      }
-    });
+  const handleLike = (postId) => {
+    const likedPosts = posts.map((post) =>
+      post.id === postId ? { ...post, isLiked: !post.isLiked } : post
+    );
+    setPosts(likedPosts);
+    localStorage.setItem("posts", JSON.stringify(likedPosts));
   };
 
-  const handleEdit = () => {
+  const handleEdit = (postId) => {
     setIsModal(true);
+    setEditedPostId(postId);
   };
 
-  const handleDelete = (index) => {
-    setPosts((previousPosts) => {
-      const remainingPosts = previousPosts.filter((_, i) => i !== index);
-      localStorage.setItem("posts", JSON.stringify(remainingPosts));
-      // localStorage.setItem("likedPosts", JSON.stringify(initialLikedPosts));
-      return remainingPosts;
-    });
+  const handleDelete = (postId) => {
+    const remainingPosts = posts.filter((post) => post?.id !== postId);
+    setPosts(remainingPosts);
+    localStorage.setItem("posts", JSON.stringify(remainingPosts));
   };
 
   return (
@@ -52,22 +45,18 @@ const index = () => {
             Description: {post?.description}
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <LikeButton
-              handleLike={handleLike}
-              likedPosts={likedPosts}
-              index={index}
-            />
+            <LikeButton handleLike={handleLike} postId={post?.id} />
             <Button
               variant="text"
               color="primary"
-              onClick={() => handleEdit(index)}
+              onClick={() => handleEdit(post.id)}
             >
               Edit
             </Button>
             <Button
               variant="text"
               color="primary"
-              onClick={() => handleDelete(index)}
+              onClick={() => handleDelete(post?.id)}
             >
               Delete
             </Button>
